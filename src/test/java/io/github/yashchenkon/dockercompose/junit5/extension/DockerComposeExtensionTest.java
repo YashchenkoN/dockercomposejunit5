@@ -12,6 +12,6 @@ public class DockerComposeExtensionTest {
 
     @Test
     public void verify() {
-
+        System.out.println();
     }
 }
