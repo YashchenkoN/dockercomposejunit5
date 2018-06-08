@@ -7,12 +7,20 @@ import com.palantir.docker.compose.connection.waiting.HealthChecks;
 import io.github.yashchenkon.dockercompose.junit5.annotation.WaitFor;
 
 /**
+ * Type of verifying that service is up.
+ *
  * @author Mykola Yashchenko
  */
 public enum WaitForType {
     ALL_PORTS_OPEN,
     TO_RESPOND_OVER_HTTP;
 
+    /**
+     * Detects which healthcheck should be performed against particular service.
+     *
+     * @param waitFor - config
+     * @return healthcheck strategy
+     */
     public static HealthCheck<Container> toHealthCheck(final WaitFor waitFor) {
         switch (waitFor.type()) {
             case ALL_PORTS_OPEN:

@@ -18,6 +18,8 @@ import io.github.yashchenkon.dockercompose.junit5.constant.WaitForType;
 import static com.palantir.docker.compose.DockerComposeRule.builder;
 
 /**
+ * Main extension that is being executed if test class annotated with {@link DockerCompose}.
+ *
  * @author Mykola Yashchenko
  */
 public class DockerComposeExtension implements BeforeAllCallback, AfterAllCallback {
