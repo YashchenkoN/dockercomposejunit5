@@ -40,7 +40,7 @@
         <connection>scm:git:git@github.com:yashchenkon/dockercomposejunit5.git</connection>
         <developerConnection>scm:git:git@github.com:yashchenkon/dockercomposejunit5.git</developerConnection>
         <url>https://github.com/yashchenkon/dockercomposejunit5</url>
-        <tag>dockercomposejunit5-${version}</tag>
+        <tag>dockercomposejunit5-${project.version}</tag>
     </scm>
 
     <properties>
