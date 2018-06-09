@@ -5,24 +5,31 @@ import java.util.Collections;
 
 import com.palantir.docker.compose.DockerComposeRule;
 import com.palantir.docker.compose.configuration.DockerComposeFiles;
+import com.palantir.docker.compose.connection.Container;
+import com.palantir.docker.compose.connection.waiting.HealthCheck;
+import com.palantir.docker.compose.logging.FileLogCollector;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.ParameterResolutionException;
+import org.junit.jupiter.api.extension.ParameterResolver;
 
 import io.github.yashchenkon.dockercompose.junit5.annotation.DockerCompose;
 import io.github.yashchenkon.dockercompose.junit5.annotation.WaitFor;
-import io.github.yashchenkon.dockercompose.junit5.constant.WaitForType;
+import io.github.yashchenkon.dockercompose.junit5.constant.HealthCheckType;
 
 import static com.palantir.docker.compose.DockerComposeRule.builder;
+import static org.joda.time.Duration.standardSeconds;
 
 /**
  * Main extension that is being executed if test class annotated with {@link DockerCompose}.
  *
  * @author Mykola Yashchenko
  */
-public class DockerComposeExtension implements BeforeAllCallback, AfterAllCallback {
+public class DockerComposeExtension implements BeforeAllCallback, AfterAllCallback, ParameterResolver {
 
     private DockerComposeRule dockerComposeRule;
 
@@ -34,11 +41,16 @@ public class DockerComposeExtension implements BeforeAllCallback, AfterAllCallba
                 .files(dockerCompose(annotation.file()));
 
         if (StringUtils.isNotEmpty(annotation.logs())) {
-            builder = builder.saveLogsTo(annotation.logs());
+            final String logPath = getClass().getClassLoader().getResource(annotation.logs()).getFile();
+            builder = builder.logCollector(new FileLogCollector(new File(logPath)));
         }
 
         for (final WaitFor waitFor : annotation.waitFor()) {
-            builder = builder.waitingForService(waitFor.service(), WaitForType.toHealthCheck(waitFor));
+            final HealthCheck<Container> healthCheck = HealthCheckType.toHealthCheck(waitFor.healthCheck());
+            if (healthCheck != null) {
+                final int timeout = waitFor.healthCheck().timeout();
+                builder = builder.waitingForService(waitFor.service(), healthCheck, standardSeconds(timeout));
+            }
         }
 
         dockerComposeRule = builder.build();
@@ -50,6 +62,18 @@ public class DockerComposeExtension implements BeforeAllCallback, AfterAllCallba
         if (dockerComposeRule != null) {
             dockerComposeRule.after();
         }
+    }
+
+    @Override
+    public boolean supportsParameter(final ParameterContext parameterContext,
+                                     final ExtensionContext extensionContext) throws ParameterResolutionException {
+        return parameterContext.getParameter().getType() == DockerComposeRule.class;
+    }
+
+    @Override
+    public Object resolveParameter(final ParameterContext parameterContext,
+                                   final ExtensionContext extensionContext) throws ParameterResolutionException {
+        return dockerComposeRule;
     }
 
     private DockerCompose annotation(final ExtensionContext extensionContext) {

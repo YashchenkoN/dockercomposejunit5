@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import io.github.yashchenkon.dockercompose.junit5.constant.WaitForType;
+import io.github.yashchenkon.dockercompose.junit5.constant.HealthCheckType;
 
 /**
  * Annotation describes the service to wait before executing the tests.
@@ -23,23 +23,9 @@ public @interface WaitFor {
     String service();
 
     /**
-     * Wait type.
+     * Health check operation to perform.
      *
-     * @return wait type
+     * @return health check
      */
-    WaitForType type();
-
-    /**
-     * Port to wait.
-     *
-     * @return port
-     */
-    int port() default 0;
-
-    /**
-     * URL to check service availability.
-     *
-     * @return url
-     */
-    String url() default "";
+    HealthCheck healthCheck() default @HealthCheck(type = HealthCheckType.IGNORE);
 }

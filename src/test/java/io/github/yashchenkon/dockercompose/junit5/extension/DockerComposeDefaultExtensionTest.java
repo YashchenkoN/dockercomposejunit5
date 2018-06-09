@@ -8,10 +8,9 @@ import io.github.yashchenkon.dockercompose.junit5.annotation.DockerCompose;
  * @author Mykola Yashchenko
  */
 @DockerCompose
-public class DockerComposeExtensionTest {
+public class DockerComposeDefaultExtensionTest {
 
     @Test
     public void verify() {
-        System.out.println();
     }
 }
