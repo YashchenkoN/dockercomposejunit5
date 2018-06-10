@@ -13,7 +13,7 @@ This library allows:
 ### Usage
 Annotate your test class with `@DockerCompose` annotation:
 
-```
+```java
 @DockerCompose
 public class Test1 {
 
@@ -28,7 +28,7 @@ services are available.
 
 To manage all this stuff, specify appropriate attributes of `@DockerCompose` annotation.
 
-```
+```java
 @DockerCompose(
         file = "docker-compose-custom.yml",
         logs = "target/logs/docker-compose",
@@ -63,7 +63,7 @@ In this case, it'll use `docker-compose-custom.yml` from the classpath, write lo
 This extension implements `ParameterResolver` interface, so you can pass `DockerComposeRule` object
 as an argument of your test:
 
-```
+```java
 @DockerCompose
 public class DockerComposeCustomExtensionTest {
 
@@ -80,7 +80,7 @@ For additional details of `DockerComposeRule`, please go to [docker-compose-rule
 
 Add following dependency to `pom.xml`:
 
-```
+```xml
 <dependency>
     <groupId>io.github.yashchenkon</groupId>
     <artifactId>dockercomposejunit5</artifactId>
