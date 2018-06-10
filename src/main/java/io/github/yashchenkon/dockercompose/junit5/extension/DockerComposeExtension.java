@@ -41,8 +41,14 @@ public class DockerComposeExtension implements BeforeAllCallback, AfterAllCallba
                 .files(dockerCompose(annotation.file()));
 
         if (StringUtils.isNotEmpty(annotation.logs())) {
-            final String logPath = getClass().getClassLoader().getResource(annotation.logs()).getFile();
-            builder = builder.logCollector(new FileLogCollector(new File(logPath)));
+            final File logDir = new File(annotation.logs());
+            if (logDir.exists()) {
+                logDir.delete();
+            }
+
+            logDir.mkdirs();
+
+            builder = builder.logCollector(new FileLogCollector(logDir));
         }
 
         for (final WaitFor waitFor : annotation.waitFor()) {

@@ -1,0 +1,13 @@
+version: '2.1'
+
+services:
+  service-1:
+    image: redsadic/docker-http-server
+    ports:
+      - "8080:8080"
+
+  service-2:
+    image: appropriate/nc
+    command: /bin/sh -c 'echo server started && nc -lk 5432'
+    ports:
+      - "5432"

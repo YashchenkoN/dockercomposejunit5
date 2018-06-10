@@ -28,7 +28,7 @@ public @interface HealthCheck {
      *
      * @return url
      */
-    String url() default "";
+    String url() default "http://$HOST:$EXTERNAL_PORT";
 
     /**
      * Timeout in seconds.
